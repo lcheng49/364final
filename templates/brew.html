@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<p>Hi! The brewery {{ brewname }} is in {{ state }}!</p>
+<p>Type of brewery: {{ type }}</p>
+<p>Phone Number: {{ phone}}</p>
+
+<div>
+{% for message in get_flashed_messages() %}
+    <strong>{{ message }}</strong>
+{% endfor %}
+</div>
+{% endblock %}

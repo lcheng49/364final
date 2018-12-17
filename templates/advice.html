@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<form action="/adviceDB" method="POST">
+	{{ form.hidden_tag() }}
+    {{ form.brew.label() }}{{ form.brew() }}<br>
+    {{ form.type.label() }}{{ form.type() }}<br>
+		{{ form.state.label() }}{{ form.state() }}<br>
+		{{form.reason.label()}}{{form.reason()}}<br>
+    {{ form.submit() }}
+</form>
+
+{% endblock %}

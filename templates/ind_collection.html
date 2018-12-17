@@ -1,0 +1,18 @@
+
+{% extends 'base.html' %}
+
+
+{% block content %}
+<h1>Brewery collections</h1>
+<ul>
+
+{% for x in collections %}
+    <li><a href="http://localhost:5000/collection/{{ x.id }}">{{ x.username }}</a></li>
+    <p>---------------------------------</p>
+{% endfor %}
+<form method="POST" action="/update">
+    {{form.submit}}
+  </form>
+</ul>
+
+{% endblock %}

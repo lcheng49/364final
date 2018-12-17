@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+
+
+{% block content %}
+<h1>{{ collect.name }}'s Collection</h1>
+
+<strong><p>Breweries:</p></strong>
+
+{% for x in brew %}
+	{{ x.brewery }}
+    </br>
+{% endfor %}
+
+{% endblock %}

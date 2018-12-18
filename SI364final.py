@@ -13,7 +13,6 @@ from flask_migrate import Migrate, MigrateCommand
 import requests
 import simplejson as json
 
-
 #login
 from flask_login import LoginManager, login_required, logout_user, login_user, UserMixin, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -42,9 +41,6 @@ login_manager = LoginManager()
 login_manager.session_protection = 'strong'
 login_manager.login_view = 'login'
 login_manager.init_app(app)
-######################################
-######## HELPER FXNS (If any) ########
-######################################
 
 ########################
 ### Helper functions ###
@@ -121,11 +117,7 @@ class Brewery(db.Model):
     __tablename__ = "brewery"
     id = db.Column(db.Integer,primary_key=True)
     brewery = db.Column(db.String(140))
-    #type = db.Column(db.String(140))
-    #state = db.Column(db.String(140))
-    #name_id = db.Column(db.Integer, db.ForeignKey('name.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-
 
 class BrewCollection(db.Model):
     __tablename__ = "collection"
@@ -134,12 +126,6 @@ class BrewCollection(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     brew = db.relationship("Brewery", secondary="brew_group", backref=db.backref("collection", lazy="dynamic"), lazy="dynamic")
 
-#class Name(db.Model):
-#    __tablename__ = "name"
-#    id = db.Column(db.Integer,primary_key=True)
-#    name = db.Column(db.String(64))
-#    brewery = db.relationship('Brewery', backref=db.backref('Name', lazy = True))
-
 class Advice(db.Model):
     __tablename__ = "advice"
     id = db.Column(db.Integer,primary_key=True)
@@ -147,12 +133,6 @@ class Advice(db.Model):
     newbrewtype = db.Column(db.String(64))
     newbrewloc = db.Column(db.String(65))
     newreason = db.Column(db.String(1000))
-
-#class Ranking(db.Model):
-#    __table__ = "rankings"
-#    id = db.Column(db.Integer, primary_key = True)
-#    name = db.Column(db.string(255))
-#    rating = db.Column(db.Integer)
 
 ###################
 ###### FORMS ######
@@ -178,9 +158,6 @@ class TypeForm(FlaskForm):
     def validate_state(self, field):
         if field.data[0].islower():
             raise ValidationError('First letter cannot be lowercase')
-    #def validate_state(self, field):
-    #    if len(field.data) == 2:
-    #        raise ValidationError('Cannot use state abbreviation')
     submit = SubmitField("Submit")
 
 class CollectionForm(FlaskForm):
@@ -274,7 +251,6 @@ def home():
 @login_required
 def add():
     form = BrewForm()
-    #name = form.name.data
     brew = form.brewery.data
     return render_template('addNew.html',form=form)
 
@@ -283,7 +259,6 @@ def add():
 def brew():
     form = BrewForm(request.form)
     if form.validate_on_submit():
-        #name = form.name.data
         brewery_name = form.brewery.data
         res = requests.get('https://api.openbrewerydb.org/breweries?by_name={}'.format(brewery_name))
         dic = json.loads(res.text)
@@ -305,8 +280,6 @@ def showAll():
     breweries = Brewery.query.all()
     final = []
     for x in breweries:
-        #user = Name.query.filter_by(id=x.name_id).first()
-        #tup = (user.name, x.brewery)
         if x.brewery not in final:
             final.append(x.brewery)
     suggest = Advice.query.all()
@@ -365,9 +338,7 @@ def collections():
     if form.validate_on_submit:
         for x in items:
             final.append(get_brewery_by_id(x[0]))
-
         get_or_create_collection(db.session, form.user_name.data, current_user, final)
-
     collections = User.query.all()
     form = UpdateButtonForm()
     return render_template('ind_collection.html', collections = collections, form = form)
@@ -376,9 +347,7 @@ def collections():
 def one(id_num):
     id = int(id_num)
     collect = BrewCollection.query.filter_by(id=id).first()
-    #print(collect)
     temp = Brewery.query.filter_by(user_id = id).all()
-    #print(temp)
     return render_template('single.html', collect = collect, brew = temp)
 
 @app.route('/update',methods=["GET","POST"])

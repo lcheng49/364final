@@ -72,12 +72,12 @@ def get_or_create_collection(db_session, user_name, current_user, brewery_list =
         db_session.commit()
         return collection
 
-def get_or_create_advice(db_session, new_brew, new_type, new_loc):
+def get_or_create_advice(db_session, new_brew, new_type, new_loc, new_reason):
     g = db_session.query.filter_by(newbrew = new_brew).first()
     if g:
         return g
     else:
-        g = Advice(newbrew= new_brew, newbrewtype = new_type, newbrewloc= new_loc)
+        g = Advice(newbrew= new_brew, newbrewtype = new_type, newbrewloc= new_loc, newreason = new_reason)
         db_session.add(g)
         db_session.commit()
         return g
@@ -139,7 +139,6 @@ class Advice(db.Model):
 ###################
 
 class BrewForm(FlaskForm):
-    #name = StringField("Please enter your name")
     brewery = StringField('Please enter a brewery', validators = [InputRequired()])
     def validate_brewery(self, field):
         if field.data[0].islower():
@@ -366,6 +365,7 @@ def update():
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('error.html'), 404
+
 
 @app.errorhandler(500)
 def internal_server_error(e):

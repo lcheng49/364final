@@ -130,7 +130,7 @@ class Brewery(db.Model):
 class BrewCollection(db.Model):
     __tablename__ = "collection"
     id = db.Column(db.Integer, primary_key = True)
-    name = db.Column(db.String(64))
+    name = db.Column(db.String(964))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     brew = db.relationship("Brewery", secondary="brew_group", backref=db.backref("collection", lazy="dynamic"), lazy="dynamic")
 
@@ -164,6 +164,8 @@ class BrewForm(FlaskForm):
     def validate_brewery(self, field):
         if field.data[0].islower():
             raise ValidationError('First letter cannot be lowercase')
+        if field.data[0] == " ":
+            raise ValidationError('Cannot start with space')
     submit = SubmitField("Submit")
 
 class NameForm(FlaskForm):
@@ -174,18 +176,24 @@ class TypeForm(FlaskForm):
     type = StringField("Please input brewery type",validators=[InputRequired()])
     state = StringField("Please input the State the brewery is in",validators=[InputRequired()])
     def validate_state(self, field):
-        if len(field.data) == 2:
-            raise ValidationError('Cannot use state abbreviation')
+        if field.data[0].islower():
+            raise ValidationError('First letter cannot be lowercase')
+    #def validate_state(self, field):
+    #    if len(field.data) == 2:
+    #        raise ValidationError('Cannot use state abbreviation')
     submit = SubmitField("Submit")
 
 class CollectionForm(FlaskForm):
-    user_name = StringField("Enter name of user: ", validators = [InputRequired()])
+    user_name = StringField("Enter name of user and make sure it is the same as the login username: ", validators = [InputRequired()])
     submit = SubmitField("Submit")
 
 class AdviceForm(FlaskForm):
     brew = StringField("Please suggest a brewery",validators=[InputRequired()])
     type = StringField("Please input brewery type",validators=[InputRequired()])
     state = StringField("Please input the State the brewery is in",validators=[InputRequired()])
+    def validate_state(self, field):
+        if len(field.data) == 2:
+            raise ValidationError('Cannot use state abbreviation')
     reason = StringField("Please input why you want to add this brewery", validators=[InputRequired()])
     submit = SubmitField("Submit")
 
